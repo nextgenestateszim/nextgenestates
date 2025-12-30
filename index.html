@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NextGen Real Estate | Global Premium Properties</title>
+    
+    <!-- External Libraries -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Common Styles -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body data-theme="dark">
+
+    <!-- TOAST NOTIFICATIONS -->
+    <div id="toast-container"></div>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <img src="NextGen Png.png" 
+                     alt="NextGen Real Estate" class="nav-logo-img">
+                <span class="nav-logo-text">NEXTGEN</span>
+            </a>
+            
+            <!-- In the desktop navigation -->
+<ul class="desktop-nav">
+    <li class="nav-item">
+        <a href="index.html" class="nav-link active">Home</a>
+    </li>
+    <li class="nav-item">
+        <span class="nav-link" onclick="toggleDropdown(this)">
+            Properties <i class="fas fa-chevron-down"></i>
+        </span>
+        <div class="dropdown">
+            <a href="listings.html?category=sale" class="dropdown-item">For Sale</a>
+            <a href="listings.html?category=rent" class="dropdown-item">For Rent</a>
+            <a href="listings.html?category=student" class="dropdown-item">Student Accommodation</a>
+            <a href="listings.html?category=commercial" class="dropdown-item">Commercial</a>
+        </div>
+    </li>
+    <li class="nav-item">
+        <a href="about.html" class="nav-link">About Us</a>
+    </li>
+    <li class="nav-item" id="auth-section">
+        <!-- Injected by JS -->
+    </li>
+    <li class="nav-item">
+        <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">
+            <i class="fas fa-moon"></i>
+        </button>
+    </li>
+</ul>
+
+<!-- In the mobile navigation -->
+<div class="mobile-nav" id="mobileNav">
+    <div class="mobile-nav-item">
+        <a href="index.html" class="mobile-nav-link active">Home</a>
+    </div>
+    <div class="mobile-nav-item">
+        <a onclick="toggleMobileDropdown('properties')" class="mobile-nav-link">
+            Properties <i class="fas fa-chevron-down" style="float: right; margin-top: 3px;"></i>
+        </a>
+        <div class="mobile-dropdown" id="mobilePropertiesDropdown">
+            <a href="listings.html?category=sale" class="mobile-dropdown-item">For Sale</a>
+            <a href="listings.html?category=rent" class="mobile-dropdown-item">For Rent</a>
+            <a href="listings.html?category=student" class="mobile-dropdown-item">Student Accommodation</a>
+            <a href="listings.html?category=commercial" class="mobile-dropdown-item">Commercial</a>
+        </div>
+    </div>
+    <div class="mobile-nav-item">
+        <a href="about.html" class="mobile-nav-link">About Us</a>
+    </div>
+    <div class="mobile-nav-item">
+        <a onclick="toggleTheme(); closeMobileMenu();" class="mobile-nav-link">
+            <i class="fas fa-moon"></i> Toggle Theme
+        </a>
+    </div>
+    <div class="mobile-nav-item" id="mobile-auth-section">
+        <!-- Injected by JS -->
+    </div>
+</div>
+
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- HOME PAGE -->
+    <section class="hero">
+        <video autoplay muted loop playsinline class="hero-video">
+            <source src="intro.mp4" type="video/mp4">
+        </video>
+        <div class="hero-content">
+            <h1> <span class="text-gradient">Experience Premium Living</span></h1>
+            <p>Discover Zimbabwe's most exclusive properties. From Borrowdale Brooke mansions to modern city apartments.</p>
+            
+            <div class="hero-search">
+                <input type="text" id="homeSearch" placeholder="Location, City, or Zip..." class="auth-input">
+                <select id="homeProvince" class="auth-input">
+                    <option value="">All Provinces</option>
+                    <option value="Harare">Harare</option>
+                    <option value="Bulawayo">Bulawayo</option>
+                    <option value="Manicaland">Manicaland</option>
+                    <option value="Mashonaland">Mashonaland</option>
+                    <option value="Masvingo">Masvingo</option>
+                    <option value="Matabeleland">Matabeleland</option>
+                    <option value="Midlands">Midlands</option>
+                </select>
+                <select id="homeType" class="auth-input">
+                    <option value="">Property Type</option>
+                    <option value="house">House</option>
+                    <option value="apartment">Apartment</option>
+                    <option value="townhouse">Townhouse</option>
+                    <option value="commercial">Commercial</option>
+                    <option value="land">Land</option>
+                </select>
+                <button onclick="handleSearch()" class="btn btn-primary">Search</button>
+            </div>
+        </div>
+    </section>
+
+    <section class="container">
+        <div class="section-header">
+            <h2>Why Choose <span class="text-primary">NextGen</span></h2>
+            <p style="color: var(--gray-text);">We bridge the gap between dream and reality.</p>
+        </div>
+        <div class="grid">
+            <div class="card" style="text-align: center; padding: 2rem;">
+                <i class="fas fa-shield-alt text-gold" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                <h3>Trust & Transparency</h3>
+                <p style="color: var(--gray-text); margin-top: 0.5rem;">Verified listings and transparent documentation processes.</p>
+            </div>
+            <div class="card" style="text-align: center; padding: 2rem;">
+                <i class="fas fa-gem text-gold" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                <h3>Premium Portfolio</h3>
+                <p style="color: var(--gray-text); margin-top: 0.5rem;">Curated collection of the finest properties in the region.</p>
+            </div>
+            <div class="card" style="text-align: center; padding: 2rem;">
+                <i class="fas fa-chart-line text-gold" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                <h3>Market Insights</h3>
+                <p style="color: var(--gray-text); margin-top: 0.5rem;">Data-driven advice to help you make the best investment.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="container" style="background: var(--card-bg);">
+        <div class="section-header">
+            <h2>Featured Properties</h2>
+        </div>
+        <div class="grid" id="featuredGrid">
+            <!-- JS Injected -->
+        </div>
+        <div style="text-align: center; margin-top: 3rem;">
+            <a href="listings.html" class="btn btn-accent">View All Properties</a>
+        </div>
+    </section>
+
+    <!-- COMPARISON BAR -->
+    <div id="compareBar">
+        <div style="display: flex; gap: 15px; align-items: center;">
+            <h4 style="margin: 0;">Compare Properties</h4>
+            <span id="compareCount" style="background: var(--accent); color: #000; padding: 2px 8px; border-radius: 10px; font-size: 0.8rem; font-weight: bold;">0/3</span>
+        </div>
+        <div style="display: flex; gap: 10px;">
+            <button onclick="clearCompare()" class="btn btn-sm btn-outline">Clear</button>
+            <a href="compare.html" class="btn btn-sm btn-accent">Compare Now</a>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer style="background: var(--dark-bg); padding: 4rem 2rem; border-top: 1px solid var(--border); margin-top: auto;">
+        <div class="container" style="padding: 0;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 3rem;">
+                <div>
+                    <img src="NextGen Png.png" alt="NextGen Logo" style="height: 40px; margin-bottom: 1rem;">
+                    <p style="color: var(--gray-text); font-size: 0.9rem;">Redefining luxury real estate in Zimbabwe and beyond.</p>
+                    <div style="display: flex; gap: 1rem; margin-top: 1rem; color: var(--light-text);">
+                        <i class="fab fa-facebook"></i>
+                        <i class="fab fa-instagram"></i>
+                        <i class="fab fa-twitter"></i>
+                        <i class="fab fa-linkedin"></i>
+                    </div>
+                </div>
+                <div>
+                    <h4 style="margin-bottom: 1rem; color: var(--accent);">Quick Links</h4>
+                    <ul style="color: var(--gray-text); font-size: 0.9rem; display: flex; flex-direction: column; gap: 0.5rem;">
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="listings.html">Properties</a></li>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a onclick="alert('Coming soon')">Terms & Conditions</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 style="margin-bottom: 1rem; color: var(--accent);">Contact</h4>
+                    <ul style="color: var(--gray-text); font-size: 0.9rem; display: flex; flex-direction: column; gap: 0.5rem;">
+                        <li>5 Lockhead Belverdere, Harare</li>
+                        <li>+263 71 570 8327 / +263 77 938 3154</li>
+                        <li>nextgenestateszim@gmail.com</li>
+                    </ul>
+                </div>
+            </div>
+            <div style="border-top: 1px solid var(--border); margin-top: 3rem; padding-top: 1.5rem; text-align: center; color: var(--gray-text); font-size: 0.8rem;">
+                &copy; 2025 NextGen Real Estate. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- MODALS (Common) -->
+    <div id="authModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 id="authTitle" style="margin: 0;">Welcome Back</h2>
+                <button onclick="closeModal('authModal')" class="modal-close">&times;</button>
+            </div>
+            
+            <div class="tabs">
+                <div class="tab active" onclick="switchAuthTab('visitor')">Visitor</div>
+                <div class="tab" onclick="switchAuthTab('staff')">Staff</div>
+            </div>
+            
+            <!-- Visitor Tab -->
+            <div id="visitorAuth" style="display: block;">
+                <form onsubmit="handleVisitorAuth(event)">
+                    <div id="visitorRegFields">
+                        <div class="form-group">
+                            <label>Full Name</label>
+                            <input type="text" id="visitorName" required class="auth-input">
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" id="visitorEmail" required class="auth-input">
+                        </div>
+                        <div class="form-group">
+                            <label>Phone Number</label>
+                            <input type="tel" id="visitorPhone" class="auth-input">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="visitorPass" required class="auth-input">
+                    </div>
+                    <button class="btn btn-primary" style="width: 100%; margin-bottom: 1rem;">
+                        <span id="visitorBtnText">Sign Up</span>
+                    </button>
+                </form>
+                <div style="text-align: center; margin-top: 1rem;">
+                    <a onclick="toggleVisitorMode()" class="text-gold" style="cursor: pointer; font-size: 0.9rem;">
+                        <span id="visitorToggleText">Already have an account? Login</span>
+                    </a>
+                    <br>
+                    <a onclick="openForgotPassword()" class="text-gold" style="cursor: pointer; font-size: 0.9rem; margin-top: 0.5rem; display: inline-block;">
+                        Forgot Password?
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Staff Tab -->
+            <div id="staffAuth" style="display: none;">
+                <form onsubmit="handleStaffAuth(event)">
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="staffEmail" required class="auth-input">
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="staffPass" required class="auth-input">
+                    </div>
+                    <button class="btn btn-primary" style="width: 100%; margin-bottom: 1rem;">Login</button>
+                </form>
+                <div style="text-align: center;">
+                    <p style="color: var(--gray-text); font-size: 0.9rem; margin-bottom: 0.5rem;">
+                        Don't have staff access?
+                    </p>
+                    <a onclick="openRequestAccessModal()" class="btn btn-outline btn-sm" style="width: 100%;">
+                        Request Access
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Other modals would be included here -->
+
+    <!-- Scripts -->
+    <script src="script.js"></script>
+    <script src="home.js"></script>
+</body>
+</html>

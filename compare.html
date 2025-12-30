@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compare Properties | NextGen Real Estate</title>
+    
+    <!-- External Libraries -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Common Styles -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body data-theme="dark">
+
+    <!-- TOAST NOTIFICATIONS -->
+    <div id="toast-container"></div>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <img src="NextGen Png.png" 
+                     alt="NextGen Real Estate" class="nav-logo-img">
+                <span class="nav-logo-text">NEXTGEN</span>
+            </a>
+            
+            <ul class="desktop-nav">
+                <li class="nav-item">
+                    <a href="index.html" class="nav-link">Home</a>
+                </li>
+                <li class="nav-item">
+                    <span class="nav-link" onclick="toggleDropdown(this)">
+                        Properties <i class="fas fa-chevron-down"></i>
+                    </span>
+                    <div class="dropdown">
+                        <a href="listings.html?category=sale" class="dropdown-item">For Sale</a>
+                        <a href="listings.html?category=rent" class="dropdown-item">For Rent</a>
+                        <a href="listings.html?category=student" class="dropdown-item">Student Accommodation</a>
+                        <a href="listings.html?category=commercial" class="dropdown-item">Commercial</a>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a href="about.html" class="nav-link">About Us</a>
+                </li>
+                <li class="nav-item" id="auth-section">
+                    <!-- Injected by JS -->
+                </li>
+                <li class="nav-item">
+                    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                </li>
+            </ul>
+
+            <!-- Mobile Menu Button -->
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Compare Page Content -->
+    <div class="page">
+        <div class="container">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                <div>
+                    <h2>Property Comparison</h2>
+                    <p style="color: var(--gray-text);">Compare up to 3 properties side by side</p>
+                </div>
+                <div>
+                    <button onclick="clearAllComparisons()" class="btn btn-outline">
+                        <i class="fas fa-trash"></i> Clear All
+                    </button>
+                </div>
+            </div>
+
+            <!-- Comparison Table -->
+            <div id="comparisonTable" class="table-container">
+                <!-- JS will populate this -->
+                <div style="text-align: center; padding: 4rem; color: var(--gray-text);">
+                    <i class="fas fa-balance-scale" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                    <h3>No Properties to Compare</h3>
+                    <p>Select properties from listings to compare them here.</p>
+                    <a href="listings.html" class="btn btn-accent" style="margin-top: 1rem;">
+                        Browse Properties
+                    </a>
+                </div>
+            </div>
+
+            <!-- Property Cards View (Alternative layout) -->
+            <div id="comparisonCards" class="grid" style="display: none; margin-top: 2rem;">
+                <!-- JS will populate with cards -->
+            </div>
+
+            <!-- Features Comparison -->
+            <div id="featuresComparison" style="display: none; margin-top: 3rem;">
+                <h3 style="margin-bottom: 1.5rem;">Detailed Feature Comparison</h3>
+                <div class="table-container">
+                    <table id="featuresTable">
+                        <thead>
+                            <tr>
+                                <th style="width: 200px;">Feature</th>
+                                <!-- Property columns will be added by JS -->
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Features will be populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div style="display: flex; gap: 1rem; margin-top: 3rem; justify-content: center;">
+                <button onclick="toggleView('table')" class="btn btn-outline active" id="tableViewBtn">
+                    <i class="fas fa-table"></i> Table View
+                </button>
+                <button onclick="toggleView('cards')" class="btn btn-outline" id="cardsViewBtn">
+                    <i class="fas fa-th-large"></i> Card View
+                </button>
+                <button onclick="toggleView('features')" class="btn btn-outline" id="featuresViewBtn">
+                    <i class="fas fa-list"></i> Features View
+                </button>
+            </div>
+
+            <!-- Analysis Section -->
+            <div id="comparisonAnalysis" style="display: none; margin-top: 3rem; padding: 2rem; background: var(--card-bg); border-radius: 8px;">
+                <h3 style="margin-bottom: 1.5rem; color: var(--accent);">Comparison Analysis</h3>
+                <div id="analysisContent">
+                    <!-- JS will populate analysis -->
+                </div>
+            </div>
+
+            <!-- Print/Export Section -->
+            <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--border);">
+                <button onclick="printComparison()" class="btn btn-outline">
+                    <i class="fas fa-print"></i> Print Comparison
+                </button>
+                <button onclick="shareComparison()" class="btn btn-outline">
+                    <i class="fas fa-share-alt"></i> Share
+                </button>
+                <button onclick="saveComparison()" class="btn btn-accent">
+                    <i class="fas fa-save"></i> Save Comparison
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer style="background: var(--dark-bg); padding: 4rem 2rem; border-top: 1px solid var(--border); margin-top: auto;">
+        <div class="container" style="padding: 0;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 3rem;">
+                <div>
+                    <img src="NextGen Png.png" alt="NextGen Logo" style="height: 40px; margin-bottom: 1rem;">
+                    <p style="color: var(--gray-text); font-size: 0.9rem;">Redefining luxury real estate in Zimbabwe and beyond.</p>
+                    <div style="display: flex; gap: 1rem; margin-top: 1rem; color: var(--light-text);">
+                        <i class="fab fa-facebook"></i>
+                        <i class="fab fa-instagram"></i>
+                        <i class="fab fa-twitter"></i>
+                        <i class="fab fa-linkedin"></i>
+                    </div>
+                </div>
+                <div>
+                    <h4 style="margin-bottom: 1rem; color: var(--accent);">Quick Links</h4>
+                    <ul style="color: var(--gray-text); font-size: 0.9rem; display: flex; flex-direction: column; gap: 0.5rem;">
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="listings.html">Properties</a></li>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a onclick="alert('Coming soon')">Terms & Conditions</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 style="margin-bottom: 1rem; color: var(--accent);">Contact</h4>
+                    <ul style="color: var(--gray-text); font-size: 0.9rem; display: flex; flex-direction: column; gap: 0.5rem;">
+                        <li>5 Lockhead Belverdere, Harare</li>
+                        <li>+263 71 570 8327 / +263 77 938 3154</li>
+                        <li>nextgenestateszim@gmail.com</li>
+                    </ul>
+                </div>
+            </div>
+            <div style="border-top: 1px solid var(--border); margin-top: 3rem; padding-top: 1.5rem; text-align: center; color: var(--gray-text); font-size: 0.8rem;">
+                &copy; 2025 NextGen Real Estate. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Compare Page JavaScript -->
+    <script>
+        // Global variables for comparison
+        let compareList = JSON.parse(localStorage.getItem('nextGenCompare')) || [];
+        let DB = JSON.parse(localStorage.getItem('nextGenDB')) || defaultDB;
+        let currentView = 'table';
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            initTheme();
+            updateAuthUI();
+            
+            if (compareList.length > 0) {
+                loadComparison();
+            }
+        });
+
+        // Load comparison data
+        function loadComparison() {
+            const properties = compareList.map(id => DB.properties.find(p => p.id === id)).filter(p => p);
+            
+            if (properties.length === 0) {
+                // No valid properties found, clear the list
+                compareList = [];
+                localStorage.setItem('nextGenCompare', JSON.stringify(compareList));
+                return;
+            }
+
+            renderTableView(properties);
+            renderCardsView(properties);
+            renderFeaturesView(properties);
+            renderAnalysis(properties);
+            
+            // Update compare bar
+            updateCompareBar();
+        }
+
+        // Render table view
+        function renderTableView(properties) {
+            const container = document.getElementById('comparisonTable');
+            
+            if (properties.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 4rem; color: var(--gray-text);">
+                        <i class="fas fa-balance-scale" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                        <h3>No Properties to Compare</h3>
+                        <p>Select properties from listings to compare them here.</p>
+                        <a href="listings.html" class="btn btn-accent" style="margin-top: 1rem;">
+                            Browse Properties
+                        </a>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 200px;">Property</th>
+                            ${properties.map(p => `
+                                <th style="text-align: center;">
+                                    <button onclick="removeFromComparison(${p.id})" class="btn btn-sm btn-danger" style="float: right; margin-left: 5px;">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </th>
+                            `).join('')}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td></td>
+                            ${properties.map(p => `
+                                <td style="text-align: center; padding: 0.5rem;">
+                                    <div onclick="window.location.href='property-detail.html?id=${p.id}'" style="cursor: pointer;">
+                                        <img src="${p.images[0]}" style="width: 100%; height: 200px; object-fit: cover; border-radius: 8px;">
+                                        <h4 style="margin: 1rem 0 0.5rem;">${p.title}</h4>
+                                        <h3 class="text-accent">$${p.price.toLocaleString()}${p.category === 'rent' ? '/month' : ''}</h3>
+                                    </div>
+                                </td>
+                            `).join('')}
+                        </tr>
+                        <tr>
+                            <td><strong>Location</strong></td>
+                            ${properties.map(p => `<td>${p.loc}, ${p.city}</td>`).join('')}
+                        </tr>
+                        <tr>
+                            <td><strong>Type</strong></td>
+                            ${properties.map(p => `<td>${p.type.charAt(0).toUpperCase() + p.type.slice(1)}</td>`).join('')}
+                        </tr>
+                        <tr>
+                            <td><strong>Category</strong></td>
+                            ${properties.map(p => `<td>${p.category === 'sale' ? 'For Sale' : p.category === 'rent' ? 'For Rent' : p.category.charAt(0).toUpperCase() + p.category.slice(1)}</td>`).join('')}
+                        </tr>
+                        <tr>
+                            <td><strong>Bedrooms</strong></td>
+                            ${properties.map(p => `<td>${p.beds}</td>`).join('')}
+                        </tr>
+                        <tr>
+                            <td><strong>Bathrooms</strong></td>
+                            ${properties.map(p => `<td>${p.baths}</td>`).join('')}
+                        </tr>
+                        <tr>
+                            <td><strong>Area</strong></td>
+                            ${properties.map(p => `<td>${p.area} m²</td>`).join('')}
+                        </tr>
+                        <tr>
+                            <td><strong>Price per m²</strong></td>
+                            ${properties.map(p => `<td>$${Math.round(p.price / p.area).toLocaleString()}${p.category === 'rent' ? '/month' : ''}</td>`).join('')}
+                        </tr>
+                        <tr>
+                            <td><strong>Status</strong></td>
+                            ${properties.map(p => `<td><span class="badge ${p.status === 'active' ? 'badge-success' : 'badge-warning'}">${p.status.toUpperCase()}</span></td>`).join('')}
+                        </tr>
+                        <tr>
+                            <td><strong>Parking</strong></td>
+                            ${properties.map(p => `<td>${p.features?.parking || 0} spaces</td>`).join('')}
+                        </tr>
+                        <tr>
+                            <td><strong>Furnished</strong></td>
+                            ${properties.map(p => `<td>${p.features?.furnished ? 'Yes' : 'No'}</td>`).join('')}
+                        </tr>
+                        <tr>
+                            <td><strong>Actions</strong></td>
+                            ${properties.map(p => `
+                                <td>
+                                    <button onclick="window.location.href='property-detail.html?id=${p.id}'" class="btn btn-sm btn-primary" style="width: 100%; margin-bottom: 0.5rem;">
+                                        <i class="fas fa-eye"></i> View Details
+                                    </button>
+                                    <button onclick="removeFromComparison(${p.id})" class="btn btn-sm btn-outline" style="width: 100%;">
+                                        <i class="fas fa-trash"></i> Remove
+                                    </button>
+                                </td>
+                            `).join('')}
+                        </tr>
+                    </tbody>
+                </table>
+            `;
+
+            container.innerHTML = html;
+        }
+
+        // Render cards view
+        function renderCardsView(properties) {
+            const container = document.getElementById('comparisonCards');
+            
+            container.innerHTML = properties.map(p => {
+                const agent = DB.users.find(u => u.id === p.agentId) || { name: 'Unknown Agent' };
+                const pricePerSqm = Math.round(p.price / p.area);
+                
+                return `
+                    <div class="card">
+                        <button onclick="removeFromComparison(${p.id})" class="btn btn-sm btn-danger" style="position: absolute; top: 15px; right: 15px; z-index: 10;">
+                            <i class="fas fa-times"></i>
+                        </button>
+                        <div class="card-img-container" onclick="window.location.href='property-detail.html?id=${p.id}'">
+                            <img src="${p.images[0]}" class="card-img">
+                            <span class="card-badge" style="background: var(--accent); color: #000;">
+                                ${p.category === 'sale' ? 'For Sale' : 'For Rent'}
+                            </span>
+                            <div class="card-price">$${p.price.toLocaleString()}${p.category === 'rent' ? '/month' : ''}</div>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">${p.title}</h3>
+                            <div class="card-location"><i class="fas fa-map-marker-alt text-gold"></i> ${p.loc}, ${p.city}</div>
+                            <div class="card-features">
+                                <span><i class="fas fa-bed text-gold"></i> ${p.beds}</span>
+                                <span><i class="fas fa-bath text-gold"></i> ${p.baths}</span>
+                                <span><i class="fas fa-ruler-combined text-gold"></i> ${p.area}m²</span>
+                            </div>
+                            <div style="margin-top: 1rem; font-size: 0.9rem; color: var(--gray-text);">
+                                <p><strong>Price/m²:</strong> $${pricePerSqm.toLocaleString()}${p.category === 'rent' ? '/month' : ''}</p>
+                                <p><strong>Agent:</strong> ${agent.name}</p>
+                                <p><strong>Parking:</strong> ${p.features?.parking || 0} spaces</p>
+                                <p><strong>Furnished:</strong> ${p.features?.furnished ? 'Yes' : 'No'}</p>
+                            </div>
+                            <button onclick="window.location.href='property-detail.html?id=${p.id}'" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">
+                                View Full Details
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Render features comparison view
+        function renderFeaturesView(properties) {
+            const container = document.getElementById('featuresTable');
+            
+            if (properties.length === 0) return;
+            
+            // Create header with property names
+            let headerHTML = `
+                <tr>
+                    <th style="width: 200px;">Feature</th>
+                    ${properties.map(p => `<th>${p.title}</th>`).join('')}
+                </tr>
+            `;
+            
+            // Create rows for each feature
+            const features = [
+                { name: 'Basic Information', type: 'header' },
+                { name: 'Price', getValue: p => `$${p.price.toLocaleString()}${p.category === 'rent' ? '/month' : ''}` },
+                { name: 'Type', getValue: p => p.type.charAt(0).toUpperCase() + p.type.slice(1) },
+                { name: 'Category', getValue: p => p.category === 'sale' ? 'For Sale' : p.category === 'rent' ? 'For Rent' : p.category.charAt(0).toUpperCase() + p.category.slice(1) },
+                { name: 'Location', getValue: p => `${p.loc}, ${p.city}` },
+                { name: 'Status', getValue: p => p.status.toUpperCase() },
+                
+                { name: 'Specifications', type: 'header' },
+                { name: 'Bedrooms', getValue: p => p.beds },
+                { name: 'Bathrooms', getValue: p => p.baths },
+                { name: 'Area', getValue: p => `${p.area} m²` },
+                { name: 'Price per m²', getValue: p => `$${Math.round(p.price / p.area).toLocaleString()}${p.category === 'rent' ? '/month' : ''}` },
+                
+                { name: 'Features', type: 'header' },
+                { name: 'Parking', getValue: p => `${p.features?.parking || 0} spaces` },
+                { name: 'Furnished', getValue: p => p.features?.furnished ? 'Yes' : 'No' },
+                { name: 'Kitchen', getValue: p => p.features?.kitchen || 'Not specified' },
+                { name: 'Power Supply', getValue: p => p.features?.power?.join(', ') || 'Not specified' },
+                { name: 'Water Supply', getValue: p => p.features?.water?.join(', ') || 'Not specified' },
+                { name: 'Security', getValue: p => p.features?.security?.join(', ') || 'Not specified' },
+                
+                { name: 'Legal Information', type: 'header' },
+                { name: 'Ownership', getValue: p => p.legal?.ownership || 'Not specified' },
+                { name: 'Title Type', getValue: p => p.legal?.title || 'Not specified' },
+                { name: 'Availability', getValue: p => p.legal?.status || 'Available' },
+            ];
+            
+            let bodyHTML = '';
+            
+            features.forEach(feature => {
+                if (feature.type === 'header') {
+                    bodyHTML += `
+                        <tr style="background: #1a1a1a;">
+                            <td colspan="${properties.length + 1}"><strong>${feature.name}</strong></td>
+                        </tr>
+                    `;
+                } else {
+                    bodyHTML += `
+                        <tr>
+                            <td><strong>${feature.name}</strong></td>
+                            ${properties.map(p => `<td>${feature.getValue(p)}</td>`).join('')}
+                        </tr>
+                    `;
+                }
+            });
+            
+            container.innerHTML = headerHTML + bodyHTML;
+        }
+
+        // Render comparison analysis
+        function renderAnalysis(properties) {
+            const container = document.getElementById('analysisContent');
+            
+            if (properties.length < 2) {
+                container.innerHTML = '<p>Add more properties to see comparison analysis.</p>';
+                return;
+            }
+            
+            // Find cheapest property
+            const cheapest = properties.reduce((min, p) => p.price < min.price ? p : min);
+            const mostExpensive = properties.reduce((max, p) => p.price > max.price ? p : max);
+            
+            // Find largest property
+            const largest = properties.reduce((max, p) => p.area > max.area ? p : max);
+            const smallest = properties.reduce((min, p) => p.area < min.area ? p : min);
+            
+            // Calculate value (price per m²)
+            const bestValue = properties.reduce((best, p) => {
+                const value = p.price / p.area;
+                const bestValue = best.price / best.area;
+                return value < bestValue ? p : best;
+            });
+            
+            let html = `
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+                    <div style="padding: 1.5rem; background: #1a1a1a; border-radius: 8px; border-left: 4px solid var(--success);">
+                        <h4 style="margin-bottom: 0.5rem; color: var(--success);">Best Value</h4>
+                        <p style="margin-bottom: 0.5rem;"><strong>${bestValue.title}</strong></p>
+                        <p style="color: var(--gray-text); font-size: 0.9rem;">
+                            Lowest price per square meter at $${Math.round(bestValue.price / bestValue.area).toLocaleString()}
+                        </p>
+                    </div>
+                    
+                    <div style="padding: 1.5rem; background: #1a1a1a; border-radius: 8px; border-left: 4px solid var(--primary);">
+                        <h4 style="margin-bottom: 0.5rem; color: var(--primary);">Most Affordable</h4>
+                        <p style="margin-bottom: 0.5rem;"><strong>${cheapest.title}</strong></p>
+                        <p style="color: var(--gray-text); font-size: 0.9rem;">
+                            Lowest total price at $${cheapest.price.toLocaleString()}
+                        </p>
+                    </div>
+                    
+                    <div style="padding: 1.5rem; background: #1a1a1a; border-radius: 8px; border-left: 4px solid var(--accent);">
+                        <h4 style="margin-bottom: 0.5rem; color: var(--accent);">Largest Property</h4>
+                        <p style="margin-bottom: 0.5rem;"><strong>${largest.title}</strong></p>
+                        <p style="color: var(--gray-text); font-size: 0.9rem;">
+                            ${largest.area} m² (${Math.round(largest.price / largest.area)}/m²)
+                        </p>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 2rem;">
+                    <h4>Key Differences</h4>
+                    <ul style="color: var(--gray-text); padding-left: 1.5rem;">
+                        <li>Price range: $${cheapest.price.toLocaleString()} - $${mostExpensive.price.toLocaleString()}</li>
+                        <li>Size range: ${smallest.area} m² - ${largest.area} m²</li>
+                        <li>Price per m² range: $${Math.round(cheapest.price / cheapest.area).toLocaleString()} - $${Math.round(mostExpensive.price / mostExpensive.area).toLocaleString()}</li>
+                    </ul>
+                </div>
+            `;
+            
+            container.innerHTML = html;
+            document.getElementById('comparisonAnalysis').style.display = 'block';
+        }
+
+        // Toggle between views
+        function toggleView(view) {
+            currentView = view;
+            
+            // Update button states
+            document.getElementById('tableViewBtn').classList.toggle('active', view === 'table');
+            document.getElementById('cardsViewBtn').classList.toggle('active', view === 'cards');
+            document.getElementById('featuresViewBtn').classList.toggle('active', view === 'features');
+            
+            // Show/hide sections
+            document.getElementById('comparisonTable').style.display = view === 'table' ? 'block' : 'none';
+            document.getElementById('comparisonCards').style.display = view === 'cards' ? 'block' : 'none';
+            document.getElementById('featuresComparison').style.display = view === 'features' ? 'block' : 'none';
+            
+            if (view === 'features') {
+                document.getElementById('comparisonAnalysis').style.marginTop = '3rem';
+            }
+        }
+
+        // Remove property from comparison
+        function removeFromComparison(id) {
+            compareList = compareList.filter(propertyId => propertyId !== id);
+            localStorage.setItem('nextGenCompare', JSON.stringify(compareList));
+            
+            // Update compare bar on other pages
+            if (window.updateCompareBar) {
+                updateCompareBar();
+            }
+            
+            // Reload the comparison
+            loadComparison();
+            showToast('Property removed from comparison', 'info');
+            
+            // If no properties left, redirect to listings
+            if (compareList.length === 0) {
+                setTimeout(() => {
+                    window.location.href = 'listings.html';
+                }, 1500);
+            }
+        }
+
+        // Clear all comparisons
+        function clearAllComparisons() {
+            if (confirm('Are you sure you want to clear all comparisons?')) {
+                compareList = [];
+                localStorage.setItem('nextGenCompare', JSON.stringify(compareList));
+                
+                // Update compare bar on other pages
+                if (window.updateCompareBar) {
+                    updateCompareBar();
+                }
+                
+                showToast('All comparisons cleared', 'info');
+                setTimeout(() => {
+                    window.location.href = 'listings.html';
+                }, 1000);
+            }
+        }
+
+        // Print comparison
+        function printComparison() {
+            window.print();
+        }
+
+        // Share comparison
+        function shareComparison() {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Property Comparison - NextGen Real Estate',
+                    text: 'Check out this property comparison on NextGen Real Estate',
+                    url: window.location.href
+                });
+            } else {
+                alert('Copy this link to share: ' + window.location.href);
+            }
+        }
+
+        // Save comparison (to user's favorites/saved comparisons)
+        function saveComparison() {
+            if (!currentUser) {
+                showToast('Please login to save comparisons', 'warning');
+                openAuthModal();
+                return;
+            }
+            
+            const comparisonData = {
+                id: Date.now(),
+                date: new Date().toISOString(),
+                properties: compareList,
+                userId: currentUser.id
+            };
+            
+            // Save to user's saved comparisons
+            if (!currentUser.savedComparisons) {
+                currentUser.savedComparisons = [];
+            }
+            
+            currentUser.savedComparisons.push(comparisonData);
+            
+            // Update user in database
+            const userIndex = DB.users.findIndex(u => u.id === currentUser.id);
+            if (userIndex !== -1) {
+                DB.users[userIndex].savedComparisons = currentUser.savedComparisons;
+                saveDB();
+                saveSession();
+            }
+            
+            showToast('Comparison saved to your account!', 'success');
+        }
+
+        // Import functions from other files
+        const initTheme = window.initTheme || function() {};
+        const updateAuthUI = window.updateAuthUI || function() {};
+        const openAuthModal = window.openAuthModal || function() {};
+        const showToast = window.showToast || function(msg, type) { alert(msg); };
+        const saveDB = window.saveDB || function() {};
+        const saveSession = window.saveSession || function() {};
+        const toggleMobileMenu = window.toggleMobileMenu || function() {};
+        const toggleDropdown = window.toggleDropdown || function() {};
+        const currentUser = window.currentUser || null;
+    </script>
+
+    <!-- Common Scripts -->
+    <script src="script.js"></script>
+</body>
+</html>

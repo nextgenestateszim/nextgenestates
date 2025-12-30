@@ -1,0 +1,1578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | NextGen Real Estate</title>
+    
+    <!-- External Libraries -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Common Styles -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body data-theme="dark">
+
+    <!-- TOAST NOTIFICATIONS -->
+    <div id="toast-container"></div>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <img src="NextGen Png.png" 
+                     alt="NextGen Real Estate" class="nav-logo-img">
+                <span class="nav-logo-text">NEXTGEN</span>
+            </a>
+            
+            <ul class="desktop-nav">
+                <li class="nav-item">
+                    <a href="index.html" class="nav-link">Home</a>
+                </li>
+                <li class="nav-item">
+                    <span class="nav-link" onclick="toggleDropdown(this)">
+                        Properties <i class="fas fa-chevron-down"></i>
+                    </span>
+                    <div class="dropdown">
+                        <a href="listings.html?category=sale" class="dropdown-item">For Sale</a>
+                        <a href="listings.html?category=rent" class="dropdown-item">For Rent</a>
+                        <a href="listings.html?category=student" class="dropdown-item">Student Accommodation</a>
+                        <a href="listings.html?category=commercial" class="dropdown-item">Commercial</a>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a href="about.html" class="nav-link">About Us</a>
+                </li>
+                <li class="nav-item" id="auth-section">
+                    <!-- Injected by JS -->
+                </li>
+                <li class="nav-item">
+                    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                </li>
+            </ul>
+
+            <!-- Mobile Navigation -->
+            <div class="mobile-nav" id="mobileNav">
+                <div class="mobile-nav-item">
+                    <a href="index.html" class="mobile-nav-link">Home</a>
+                </div>
+                <div class="mobile-nav-item">
+                    <a onclick="toggleMobileDropdown('properties')" class="mobile-nav-link">
+                        Properties <i class="fas fa-chevron-down" style="float: right; margin-top: 3px;"></i>
+                    </a>
+                    <div class="mobile-dropdown" id="mobilePropertiesDropdown">
+                        <a href="listings.html?category=sale" class="mobile-dropdown-item">For Sale</a>
+                        <a href="listings.html?category=rent" class="mobile-dropdown-item">For Rent</a>
+                        <a href="listings.html?category=student" class="mobile-dropdown-item">Student Accommodation</a>
+                        <a href="listings.html?category=commercial" class="mobile-dropdown-item">Commercial</a>
+                    </div>
+                </div>
+                <div class="mobile-nav-item">
+                    <a href="about.html" class="mobile-nav-link">About Us</a>
+                </div>
+                <div class="mobile-nav-item">
+                    <a onclick="toggleTheme(); closeMobileMenu();" class="mobile-nav-link">
+                        <i class="fas fa-moon"></i> Toggle Theme
+                    </a>
+                </div>
+                <div class="mobile-nav-item" id="mobile-auth-section">
+                    <!-- Injected by JS -->
+                </div>
+            </div>
+
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- DASHBOARD -->
+    <div class="dash-container">
+        <aside class="sidebar" id="dashboardSidebar">
+            <div style="text-align: center; padding: 2rem; border-bottom: 1px solid var(--border);">
+                <div style="width: 80px; height: 80px; background: var(--accent); border-radius: 50%; margin: 0 auto 1rem; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: #000; font-weight: bold;" id="dashAvatar">U</div>
+                <h4 id="dashName">User</h4>
+                <small id="dashRole" style="color: var(--accent); text-transform: uppercase;">Role</small>
+            </div>
+            <nav style="padding: 1rem 0;" id="dashNav">
+                <!-- Injected by JS -->
+            </nav>
+        </aside>
+        <main class="main-content" id="dashContent">
+            <!-- Injected by JS -->
+        </main>
+    </div>
+
+    <!-- MODALS -->
+
+    <!-- Add Property Modal -->
+    <div id="addPropertyModal" class="modal-overlay">
+        <div class="modal" style="max-width: 800px;">
+            <div class="modal-header">
+                <h2 style="margin: 0;">Add New Property</h2>
+                <button onclick="closeModal('addPropertyModal')" class="modal-close">&times;</button>
+            </div>
+            <form onsubmit="handleAddProperty(event)" id="propertyForm">
+                <div id="propertyFormContent"></div>
+                
+                <div style="display: flex; gap: 10px; margin-top: 2rem;">
+                    <button type="button" onclick="closeModal('addPropertyModal')" class="btn btn-outline" style="flex: 1;">Cancel</button>
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">Add Property</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Manage Users Modal -->
+    <div id="manageUsersModal" class="modal-overlay">
+        <div class="modal" style="max-width: 900px;">
+            <div class="modal-header">
+                <h2 style="margin: 0;">Manage Users</h2>
+                <button onclick="closeModal('manageUsersModal')" class="modal-close">&times;</button>
+            </div>
+            
+            <div style="margin-bottom: 1.5rem;">
+                <button onclick="openAddUserModal()" class="btn btn-primary btn-sm">
+                    <i class="fas fa-plus"></i> Add New User
+                </button>
+            </div>
+            
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTableBody">
+                        <!-- JS populated -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit User Modal -->
+    <div id="addUserModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 id="userModalTitle" style="margin: 0;">Add New User</h2>
+                <button onclick="closeModal('addUserModal')" class="modal-close">&times;</button>
+            </div>
+            <form onsubmit="handleSaveUser(event)">
+                <input type="hidden" id="editUserId">
+                
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="userName" required class="auth-input">
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="userEmail" required class="auth-input">
+                </div>
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <input type="tel" id="userPhone" class="auth-input">
+                </div>
+                <div class="form-group">
+                    <label>Role</label>
+                    <select id="userRole" required onchange="toggleAgentFields()" class="auth-input">
+                        <option value="">Select Role</option>
+                        <option value="owner">Owner</option>
+                        <option value="admin">Admin</option>
+                        <option value="agent">Agent</option>
+                        <option value="visitor">Visitor</option>
+                    </select>
+                </div>
+                
+                <div id="agentFields" style="display: none;">
+                    <div class="form-group">
+                        <label>Department</label>
+                        <input type="text" id="userDepartment" class="auth-input">
+                    </div>
+                    <div class="form-group">
+                        <label>Commission Rate (%)</label>
+                        <input type="number" id="userCommission" min="0" max="100" step="0.1" class="auth-input">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Status</label>
+                    <select id="userStatus" required class="auth-input">
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                        <option value="pending">Pending</option>
+                    </select>
+                </div>
+                
+                <div id="passwordFields">
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="userPassword" class="auth-input">
+                    </div>
+                    <div class="form-group">
+                        <label>Confirm Password</label>
+                        <input type="password" id="userConfirmPassword" class="auth-input">
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: 10px; margin-top: 2rem;">
+                    <button type="button" onclick="closeModal('addUserModal')" class="btn btn-outline" style="flex: 1;">Cancel</button>
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">Save User</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Comparison Modal -->
+    <div id="compareModal" class="modal-overlay">
+        <div class="modal" style="max-width: 1200px; width: 95%;">
+            <div class="modal-header">
+                <h2 style="margin: 0;">Property Comparison</h2>
+                <button onclick="closeModal('compareModal')" class="modal-close">&times;</button>
+            </div>
+            <div style="overflow-x: auto;">
+                <div id="compareContent" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; min-width: 800px;">
+                    <!-- JS Injected -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Auth Modal -->
+    <div id="authModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 id="authTitle" style="margin: 0;">Welcome Back</h2>
+                <button onclick="closeModal('authModal')" class="modal-close">&times;</button>
+            </div>
+            
+            <div class="tabs">
+                <div class="tab active" onclick="switchAuthTab('visitor')">Visitor</div>
+                <div class="tab" onclick="switchAuthTab('staff')">Staff</div>
+            </div>
+            
+            <!-- Visitor Tab -->
+            <div id="visitorAuth" style="display: block;">
+                <form onsubmit="handleVisitorAuth(event)">
+                    <div id="visitorRegFields">
+                        <div class="form-group">
+                            <label>Full Name</label>
+                            <input type="text" id="visitorName" required class="auth-input">
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" id="visitorEmail" required class="auth-input">
+                        </div>
+                        <div class="form-group">
+                            <label>Phone Number</label>
+                            <input type="tel" id="visitorPhone" class="auth-input">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="visitorPass" required class="auth-input">
+                    </div>
+                    <button class="btn btn-primary" style="width: 100%; margin-bottom: 1rem;">
+                        <span id="visitorBtnText">Sign Up</span>
+                    </button>
+                </form>
+                <div style="text-align: center; margin-top: 1rem;">
+                    <a onclick="toggleVisitorMode()" class="text-gold" style="cursor: pointer; font-size: 0.9rem;">
+                        <span id="visitorToggleText">Already have an account? Login</span>
+                    </a>
+                    <br>
+                    <a onclick="openForgotPassword()" class="text-gold" style="cursor: pointer; font-size: 0.9rem; margin-top: 0.5rem; display: inline-block;">
+                        Forgot Password?
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Staff Tab -->
+            <div id="staffAuth" style="display: none;">
+                <form onsubmit="handleStaffAuth(event)">
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="staffEmail" required class="auth-input">
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="staffPass" required class="auth-input">
+                    </div>
+                    <button class="btn btn-primary" style="width: 100%; margin-bottom: 1rem;">Login</button>
+                </form>
+                <div style="text-align: center;">
+                    <p style="color: var(--gray-text); font-size: 0.9rem; margin-bottom: 0.5rem;">
+                        Don't have staff access?
+                    </p>
+                    <a onclick="openRequestAccessModal()" class="btn btn-outline btn-sm" style="width: 100%;">
+                        Request Access
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Forgot Password Modal -->
+    <div id="forgotPasswordModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 style="margin: 0;">Reset Password</h2>
+                <button onclick="closeModal('forgotPasswordModal')" class="modal-close">&times;</button>
+            </div>
+            <form onsubmit="handleForgotPassword(event)">
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" id="forgotEmail" required class="auth-input">
+                </div>
+                <p style="color: var(--gray-text); font-size: 0.9rem; margin-bottom: 1.5rem;">
+                    Enter your email address and we'll send you a password reset link.
+                </p>
+                <button class="btn btn-primary" style="width: 100%;">Send Reset Link</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Request Access Modal -->
+    <div id="requestAccessModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 style="margin: 0;">Request Staff Access</h2>
+                <button onclick="closeModal('requestAccessModal')" class="modal-close">&times;</button>
+            </div>
+            <form onsubmit="handleRequestAccess(event)">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="requestName" required class="auth-input">
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="requestEmail" required class="auth-input">
+                </div>
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <input type="tel" id="requestPhone" required class="auth-input">
+                </div>
+                <div class="form-group">
+                    <label>Desired Role</label>
+                    <select id="requestRole" required class="auth-input">
+                        <option value="">Select Role</option>
+                        <option value="agent">Agent</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Why do you want to join NextGen?</label>
+                    <textarea id="requestReason" rows="4" required class="auth-input"></textarea>
+                </div>
+                <button class="btn btn-primary" style="width: 100%;">Submit Request</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Change Password Modal -->
+    <div id="changePasswordModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 style="margin: 0; color: var(--accent);">Change Your Password</h2>
+                <button onclick="closeModal('changePasswordModal')" class="modal-close">&times;</button>
+            </div>
+            <form onsubmit="handleChangePassword(event)" id="changePasswordForm">
+                <div class="form-group">
+                    <label>Current Password</label>
+                    <input type="password" id="currentPassword" required class="auth-input">
+                </div>
+                <div class="form-group">
+                    <label>New Password</label>
+                    <input type="password" id="newPassword" required class="auth-input" minlength="6">
+                    <small style="color: var(--gray-text); font-size: 0.8rem;">Minimum 6 characters</small>
+                </div>
+                <div class="form-group">
+                    <label>Confirm New Password</label>
+                    <input type="password" id="confirmNewPassword" required class="auth-input">
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 2rem;">
+                    <button type="submit" class="btn btn-accent" style="flex: 1;">Change Password</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer style="background: var(--dark-bg); padding: 4rem 2rem; border-top: 1px solid var(--border); margin-top: auto;">
+        <div class="container" style="padding: 0;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 3rem;">
+                <div>
+                    <img src="NextGen Png.png" alt="NextGen Logo" style="height: 40px; margin-bottom: 1rem;">
+                    <p style="color: var(--gray-text); font-size: 0.9rem;">Redefining luxury real estate in Zimbabwe and beyond.</p>
+                    <div style="display: flex; gap: 1rem; margin-top: 1rem; color: var(--light-text);">
+                        <i class="fab fa-facebook"></i>
+                        <i class="fab fa-instagram"></i>
+                        <i class="fab fa-twitter"></i>
+                        <i class="fab fa-linkedin"></i>
+                    </div>
+                </div>
+                <div>
+                    <h4 style="margin-bottom: 1rem; color: var(--accent);">Quick Links</h4>
+                    <ul style="color: var(--gray-text); font-size: 0.9rem; display: flex; flex-direction: column; gap: 0.5rem;">
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="listings.html">Properties</a></li>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a onclick="alert('Coming soon')">Terms & Conditions</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 style="margin-bottom: 1rem; color: var(--accent);">Contact</h4>
+                    <ul style="color: var(--gray-text); font-size: 0.9rem; display: flex; flex-direction: column; gap: 0.5rem;">
+                        <li>5 Lockhead Belverdere, Harare</li>
+                        <li>+263 71 570 8327 / +263 77 938 3154</li>
+                        <li>nextgenestateszim@gmail.com</li>
+                    </ul>
+                </div>
+            </div>
+            <div style="border-top: 1px solid var(--border); margin-top: 3rem; padding-top: 1.5rem; text-align: center; color: var(--gray-text); font-size: 0.8rem;">
+                &copy; 2025 NextGen Real Estate. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="script.js"></script>
+    <script>
+        // Dashboard specific JavaScript
+        let editPropertyId = null;
+        let editUserId = null;
+
+        function enterDashboard() {
+            if(!currentUser) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            document.getElementById('dashName').innerText = currentUser.name;
+            document.getElementById('dashRole').innerText = currentUser.role;
+            document.getElementById('dashAvatar').innerText = currentUser.avatar;
+
+            // Generate Menu based on Role
+            const menu = document.getElementById('dashNav');
+            let items = '';
+            
+            // Common items
+            items += `<a onclick="renderDashView('overview')" class="dash-menu-item active"><i class="fas fa-chart-pie"></i> Overview</a>`;
+            items += `<a onclick="renderDashView('favorites')" class="dash-menu-item"><i class="fas fa-heart"></i> Saved Properties</a>`;
+            
+            // Owner/Admin specific
+            if(['owner', 'admin'].includes(currentUser.role)) {
+                items += `
+                    <a onclick="renderDashView('properties')" class="dash-menu-item"><i class="fas fa-building"></i> Manage Properties</a>
+                    <a onclick="openManageUsers()" class="dash-menu-item"><i class="fas fa-users"></i> Manage Users</a>
+                    <a onclick="renderDashView('requests')" class="dash-menu-item"><i class="fas fa-user-clock"></i> Access Requests</a>
+                    <a onclick="renderDashView('pipeline')" class="dash-menu-item"><i class="fas fa-stream"></i> Sales Pipeline</a>
+                `;
+            }
+            
+            // Agent specific
+            if(currentUser.role === 'agent') {
+                items += `
+                    <a onclick="renderDashView('myproperties')" class="dash-menu-item"><i class="fas fa-home"></i> My Properties</a>
+                    <a onclick="renderDashView('addproperty')" class="dash-menu-item"><i class="fas fa-plus-circle"></i> Add Property</a>
+                `;
+            }
+            
+            // Visitor specific
+            if(currentUser.role === 'visitor') {
+                items += `<a onclick="openRequestAccessModal()" class="dash-menu-item"><i class="fas fa-briefcase"></i> Become Agent</a>`;
+            }
+            
+            items += `<a onclick="logout()" class="dash-menu-item" style="color: var(--danger); margin-top: 2rem;"><i class="fas fa-sign-out-alt"></i> Logout</a>`;
+            
+            menu.innerHTML = items;
+            renderDashView('overview');
+        }
+
+        function renderDashView(view) {
+            const content = document.getElementById('dashContent');
+            const menuItems = document.querySelectorAll('.dash-menu-item');
+            menuItems.forEach(item => item.classList.remove('active'));
+            
+            // Find and activate the clicked menu item
+            if (event && event.target) {
+                event.target.classList.add('active');
+            } else {
+                // Activate first menu item if no event
+                document.querySelector('.dash-menu-item').classList.add('active');
+            }
+            
+            if(view === 'overview') {
+                const totalProperties = DB.properties.length;
+                const activeProperties = DB.properties.filter(p => p.status === 'active').length;
+                const totalUsers = DB.users.length;
+                const pendingRequests = DB.requests.filter(r => r.status === 'pending').length;
+                const totalSales = DB.properties.filter(p => p.category === 'sale' && p.status === 'sold').length;
+                const totalRevenue = DB.properties
+                    .filter(p => p.status === 'sold')
+                    .reduce((sum, p) => sum + p.price, 0);
+                
+                content.innerHTML = `
+                    <h2 style="margin-bottom: 2rem;">Dashboard Overview</h2>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+                        <div class="card" style="padding: 1.5rem;">
+                            <p style="color: var(--gray-text);">Total Properties</p>
+                            <h2 class="text-primary">${totalProperties}</h2>
+                            <small style="color: var(--success);">${activeProperties} Active</small>
+                        </div>
+                        <div class="card" style="padding: 1.5rem;">
+                            <p style="color: var(--gray-text);">System Users</p>
+                            <h2 class="text-primary">${totalUsers}</h2>
+                        </div>
+                        <div class="card" style="padding: 1.5rem;">
+                            <p style="color: var(--gray-text);">Pending Requests</p>
+                            <h2 class="text-primary">${pendingRequests}</h2>
+                        </div>
+                        <div class="card" style="padding: 1.5rem;">
+                            <p style="color: var(--gray-text);">Total Sales</p>
+                            <h2 class="text-primary">${totalSales}</h2>
+                            <small style="color: var(--primary);">$${totalRevenue.toLocaleString()} Revenue</small>
+                        </div>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 2rem;">
+                        <div class="card" style="padding: 1.5rem;">
+                            <h3 style="margin-bottom: 1rem;">Recent Properties</h3>
+                            ${DB.properties.slice(-5).reverse().map(p => `
+                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; border-bottom: 1px solid var(--border);">
+                                    <div>
+                                        <strong>${p.title}</strong>
+                                        <div style="font-size: 0.8rem; color: var(--gray-text);">${p.loc}</div>
+                                    </div>
+                                    <span class="badge ${p.status === 'active' ? 'badge-success' : 'badge-warning'}">${p.status}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                        
+                        <div class="card" style="padding: 1.5rem;">
+                            <h3 style="margin-bottom: 1rem;">Quick Stats</h3>
+                            <div style="display: grid; gap: 1rem;">
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span>For Sale:</span>
+                                    <strong class="text-primary">${DB.properties.filter(p => p.category === 'sale' && p.status === 'active').length}</strong>
+                                </div>
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span>For Rent:</span>
+                                    <strong class="text-primary">${DB.properties.filter(p => p.category === 'rent' && p.status === 'active').length}</strong>
+                                </div>
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span>Student Properties:</span>
+                                    <strong class="text-primary">${DB.properties.filter(p => p.category === 'student' && p.status === 'active').length}</strong>
+                                </div>
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span>Active Agents:</span>
+                                    <strong class="text-primary">${DB.users.filter(u => u.role === 'agent' && u.status === 'active').length}</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            else if(view === 'properties') {
+                const userProperties = ['owner', 'admin'].includes(currentUser.role) ? 
+                    DB.properties : 
+                    DB.properties.filter(p => p.agentId === currentUser.id);
+                
+                content.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                        <h2>Manage Properties</h2>
+                        <button onclick="openAddPropertyModal()" class="btn btn-accent">
+                            <i class="fas fa-plus"></i> Add Property
+                        </button>
+                    </div>
+                    
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Property</th>
+                                    <th>Location</th>
+                                    <th>Type</th>
+                                    <th>Price</th>
+                                    <th>Status</th>
+                                    <th>Agent</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${userProperties.map(p => {
+                                    const agent = DB.users.find(u => u.id === p.agentId) || { name: 'Unassigned' };
+                                    return `
+                                        <tr>
+                                            <td>
+                                                <strong>${p.title}</strong><br>
+                                                <small style="color: var(--gray-text);">ID: ${p.id}</small>
+                                            </td>
+                                            <td>${p.loc}, ${p.city}</td>
+                                            <td>${p.type.charAt(0).toUpperCase() + p.type.slice(1)}</td>
+                                            <td class="text-primary">$${p.price.toLocaleString()}${p.category === 'rent' ? '/month' : ''}</td>
+                                            <td>
+                                                <span class="badge ${p.status === 'active' ? 'badge-success' : p.status === 'sold' ? 'badge-warning' : 'badge-danger'}">
+                                                    ${p.status.toUpperCase()}
+                                                </span>
+                                            </td>
+                                            <td>${agent.name}</td>
+                                            <td class="action-buttons">
+                                                <a href="property-detail.html?id=${p.id}" class="btn btn-sm btn-outline">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                                <button onclick="editProperty(${p.id})" class="btn btn-sm btn-outline">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button onclick="deleteProperty(${p.id})" class="btn btn-sm btn-danger">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    `;
+                                }).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            }
+            else if(view === 'favorites') {
+                const favorites = currentUser.favorites || [];
+                const favoriteProperties = DB.properties.filter(p => favorites.includes(p.id));
+                
+                content.innerHTML = `
+                    <h2 style="margin-bottom: 2rem;">Saved Properties</h2>
+                    ${favoriteProperties.length > 0 ? `
+                        <div class="grid">
+                            ${favoriteProperties.map(p => createCard(p)).join('')}
+                        </div>
+                    ` : `
+                        <div style="text-align: center; padding: 3rem; color: var(--gray-text);">
+                            <i class="fas fa-heart" style="font-size: 3rem; margin-bottom: 1rem; color: var(--border);"></i>
+                            <h3>No saved properties</h3>
+                            <p>Browse properties and click the heart icon to save them here.</p>
+                            <a href="listings.html" class="btn btn-accent" style="margin-top: 1rem;">Browse Properties</a>
+                        </div>
+                    `}
+                `;
+            }
+            else if(view === 'requests') {
+                content.innerHTML = `
+                    <h2 style="margin-bottom: 2rem;">Access Requests</h2>
+                    ${DB.requests.length > 0 ? `
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Phone</th>
+                                        <th>Desired Role</th>
+                                        <th>Date</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${DB.requests.map(req => `
+                                        <tr>
+                                            <td>${req.name}</td>
+                                            <td>${req.email}</td>
+                                            <td>${req.phone}</td>
+                                            <td>${req.desiredRole}</td>
+                                            <td>${new Date(req.date).toLocaleDateString()}</td>
+                                            <td>
+                                                <span class="badge ${req.status === 'pending' ? 'badge-warning' : req.status === 'approved' ? 'badge-success' : 'badge-danger'}">
+                                                    ${req.status.toUpperCase()}
+                                                </span>
+                                            </td>
+                                            <td class="action-buttons">
+                                                ${req.status === 'pending' ? `
+                                                    <button onclick="approveRequest(${req.id})" class="btn btn-sm btn-success">
+                                                        <i class="fas fa-check"></i> Approve
+                                                    </button>
+                                                    <button onclick="rejectRequest(${req.id})" class="btn btn-sm btn-danger">
+                                                        <i class="fas fa-times"></i> Reject
+                                                    </button>
+                                                ` : ''}
+                                                <button onclick="viewRequestDetails(${req.id})" class="btn btn-sm btn-outline">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    ` : `
+                        <div style="text-align: center; padding: 3rem; color: var(--gray-text);">
+                            <i class="fas fa-user-clock" style="font-size: 3rem; margin-bottom: 1rem; color: var(--border);"></i>
+                            <h3>No pending requests</h3>
+                            <p>All access requests have been processed.</p>
+                        </div>
+                    `}
+                `;
+            }
+            else if(view === 'pipeline') {
+                content.innerHTML = `
+                    <h2 style="margin-bottom: 2rem;">Sales Pipeline</h2>
+                    <div class="kanban-board">
+                        <div class="kanban-col">
+                            <div class="kanban-header">
+                                <span>Leads</span>
+                                <span style="background: var(--border); padding: 2px 6px; border-radius: 4px; font-size: 0.8rem;">
+                                    ${DB.pipeline.filter(p => p.stage === 'lead').length}
+                                </span>
+                            </div>
+                            ${DB.pipeline.filter(p => p.stage === 'lead').map(p => `
+                                <div class="kanban-card">
+                                    <h4>${p.title}</h4>
+                                    <p style="font-size: 0.8rem; color: var(--gray-text);">Value: ${p.value}</p>
+                                    <div style="margin-top: 10px; display: flex; justify-content: space-between; font-size: 0.8rem;">
+                                        <span>${p.agent}</span>
+                                        <span class="text-primary">Hot</span>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div class="kanban-col">
+                            <div class="kanban-header">
+                                <span>Negotiation</span>
+                                <span style="background: var(--border); padding: 2px 6px; border-radius: 4px; font-size: 0.8rem;">
+                                    ${DB.pipeline.filter(p => p.stage === 'negotiation').length}
+                                </span>
+                            </div>
+                            ${DB.pipeline.filter(p => p.stage === 'negotiation').map(p => `
+                                <div class="kanban-card">
+                                    <h4>${p.title}</h4>
+                                    <p style="font-size: 0.8rem; color: var(--gray-text);">Value: ${p.value}</p>
+                                    <div style="margin-top: 10px; display: flex; justify-content: space-between; font-size: 0.8rem;">
+                                        <span>${p.agent}</span>
+                                        <span style="color: var(--warning);">In Progress</span>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div class="kanban-col">
+                            <div class="kanban-header">
+                                <span>Closed Won</span>
+                                <span style="background: var(--border); padding: 2px 6px; border-radius: 4px; font-size: 0.8rem;">
+                                    ${DB.pipeline.filter(p => p.stage === 'sold').length}
+                                </span>
+                            </div>
+                            ${DB.pipeline.filter(p => p.stage === 'sold').map(p => `
+                                <div class="kanban-card" style="border-color: var(--success);">
+                                    <h4>${p.title}</h4>
+                                    <p style="font-size: 0.8rem; color: var(--gray-text);">Value: ${p.value}</p>
+                                    <div style="margin-top: 10px; font-size: 0.8rem;">
+                                        <span>${p.agent}</span>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+            else if(view === 'myproperties') {
+                const myProperties = DB.properties.filter(p => p.agentId === currentUser.id);
+                content.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                        <h2>My Properties</h2>
+                        <button onclick="openAddPropertyModal()" class="btn btn-accent">
+                            <i class="fas fa-plus"></i> Add Property
+                        </button>
+                    </div>
+                    
+                    ${myProperties.length > 0 ? `
+                        <div class="grid">
+                            ${myProperties.map(p => createCard(p)).join('')}
+                        </div>
+                    ` : `
+                        <div style="text-align: center; padding: 3rem; color: var(--gray-text);">
+                            <i class="fas fa-home" style="font-size: 3rem; margin-bottom: 1rem; color: var(--border);"></i>
+                            <h3>No properties assigned</h3>
+                            <p>You haven't been assigned any properties yet.</p>
+                            <button onclick="openAddPropertyModal()" class="btn btn-accent" style="margin-top: 1rem;">Add Your First Property</button>
+                        </div>
+                    `}
+                `;
+            }
+            else if(view === 'addproperty') {
+                openAddPropertyModal();
+            }
+        }
+
+        function openAddPropertyModal(propertyId = null) {
+            editPropertyId = propertyId;
+            const modalTitle = propertyId ? 'Edit Property' : 'Add New Property';
+            document.querySelector('#addPropertyModal .modal-header h2').textContent = modalTitle;
+            
+            const formContent = document.getElementById('propertyFormContent');
+            const agents = DB.users.filter(u => u.role === 'agent' || u.role === 'admin' || u.role === 'owner');
+            
+            let property = null;
+            if (propertyId) {
+                property = DB.properties.find(p => p.id === propertyId);
+            }
+            
+            formContent.innerHTML = `
+                <div class="upload-section">
+                    <h3>Basic Information</h3>
+                    <div class="multi-input-row">
+                        <div class="form-group">
+                            <label>Property Title *</label>
+                            <input type="text" id="propTitle" value="${property ? property.title : ''}" required class="auth-input">
+                        </div>
+                        <div class="form-group">
+                            <label>Listing Type *</label>
+                            <select id="propCategory" required class="auth-input">
+                                <option value="">Select</option>
+                                <option value="sale" ${property && property.category === 'sale' ? 'selected' : ''}>For Sale</option>
+                                <option value="rent" ${property && property.category === 'rent' ? 'selected' : ''}>For Rent</option>
+                                <option value="student" ${property && property.category === 'student' ? 'selected' : ''}>Student Accommodation</option>
+                                <option value="commercial" ${property && property.category === 'commercial' ? 'selected' : ''}>Commercial</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="multi-input-row">
+                        <div class="form-group">
+                            <label>Property Type *</label>
+                            <select id="propType" required class="auth-input">
+                                <option value="">Select</option>
+                                ${DB.propertyTypes.map(type => `
+                                    <option value="${type.toLowerCase()}" ${property && property.type === type.toLowerCase() ? 'selected' : ''}>
+                                        ${type}
+                                    </option>
+                                `).join('')}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Price ($) *</label>
+                            <input type="number" id="propPrice" value="${property ? property.price : ''}" required min="0" class="auth-input">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="upload-section">
+                    <h3>Location Details</h3>
+                    <div class="multi-input-row">
+                        <div class="form-group">
+                            <label>Province *</label>
+                            <select id="propProvince" required class="auth-input">
+                                <option value="">Select Province</option>
+                                ${Object.keys(DB.cities).map(prov => `
+                                    <option value="${prov}" ${property && property.province === prov ? 'selected' : ''}>${prov}</option>
+                                `).join('')}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>City *</label>
+                            <!-- CHANGED TO TEXT INPUT INSTEAD OF DROPDOWN -->
+                            <input type="text" id="propCity" value="${property ? property.city : ''}" required class="auth-input" placeholder="Enter city name (e.g., Harare, Bulawayo)">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Suburb/Area *</label>
+                        <input type="text" id="propLocation" value="${property ? property.loc : ''}" required class="auth-input">
+                    </div>
+                    <div class="form-group">
+                        <label>Exact Address (Optional)</label>
+                        <input type="text" id="propAddress" value="${property ? property.address || '' : ''}" class="auth-input">
+                    </div>
+                    <div class="multi-input-row">
+                        <div class="form-group">
+                            <label>Latitude (for map)</label>
+                            <input type="number" step="any" id="propLat" value="${property && property.coordinates ? property.coordinates.lat : '-17.83'}" class="auth-input">
+                        </div>
+                        <div class="form-group">
+                            <label>Longitude (for map)</label>
+                            <input type="number" step="any" id="propLng" value="${property && property.coordinates ? property.coordinates.lng : '31.05'}" class="auth-input">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="upload-section">
+                    <h3>Property Features</h3>
+                    <div class="multi-input-row">
+                        <div class="form-group">
+                            <label>Bedrooms *</label>
+                            <input type="number" id="propBeds" value="${property ? property.beds : ''}" required min="0" class="auth-input">
+                        </div>
+                        <div class="form-group">
+                            <label>Bathrooms *</label>
+                            <input type="number" id="propBaths" value="${property ? property.baths : ''}" required min="0" class="auth-input">
+                        </div>
+                        <div class="form-group">
+                            <label>Parking Spaces</label>
+                            <input type="number" id="propParking" value="${property && property.features ? property.features.parking || 0 : 0}" min="0" class="auth-input">
+                        </div>
+                        <div class="form-group">
+                            <label>Total Area (m²) *</label>
+                            <input type="number" id="propArea" value="${property ? property.area : ''}" required min="0" class="auth-input">
+                        </div>
+                    </div>
+                    <div class="multi-input-row">
+                        <div class="form-group">
+                            <label>Kitchen Type</label>
+                            <input type="text" id="propKitchen" value="${property && property.features ? property.features.kitchen || '' : ''}" class="auth-input">
+                        </div>
+                        <div class="form-group">
+                            <label>Furnished</label>
+                            <select id="propFurnished" class="auth-input">
+                                <option value="">Select</option>
+                                <option value="true" ${property && property.features && property.features.furnished === true ? 'selected' : ''}>Yes</option>
+                                <option value="false" ${property && property.features && property.features.furnished === false ? 'selected' : ''}>No</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="upload-section">
+                    <h3>Utilities & Security</h3>
+                    <div class="form-group">
+                        <label>Power Supply (Select all applicable)</label>
+                        <div class="checkbox-group" id="powerCheckboxes">
+                            ${DB.powerOptions.map(option => `
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="power" value="${option}"
+                                        ${property && property.features && property.features.power && property.features.power.includes(option) ? 'checked' : ''}>
+                                    ${option}
+                                </label>
+                            `).join('')}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Water Supply (Select all applicable)</label>
+                        <div class="checkbox-group" id="waterCheckboxes">
+                            ${DB.waterOptions.map(option => `
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="water" value="${option}"
+                                        ${property && property.features && property.features.water && property.features.water.includes(option) ? 'checked' : ''}>
+                                    ${option}
+                                </label>
+                            `).join('')}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Security Features (Select all applicable)</label>
+                        <div class="checkbox-group" id="securityCheckboxes">
+                            ${DB.securityOptions.map(option => `
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="security" value="${option}"
+                                        ${property && property.features && property.features.security && property.features.security.includes(option) ? 'checked' : ''}>
+                                    ${option}
+                                </label>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="upload-section">
+                    <h3>Legal & Contact Information</h3>
+                    <div class="multi-input-row">
+                        <div class="form-group">
+                            <label>Ownership Status</label>
+                            <select id="propOwnership" class="auth-input">
+                                <option value="">Select</option>
+                                <option value="Owner" ${property && property.legal && property.legal.ownership === 'Owner' ? 'selected' : ''}>Owner</option>
+                                <option value="Agent" ${property && property.legal && property.legal.ownership === 'Agent' ? 'selected' : ''}>Agent</option>
+                                <option value="Developer" ${property && property.legal && property.legal.ownership === 'Developer' ? 'selected' : ''}>Developer</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Title Type</label>
+                            <select id="propTitleType" class="auth-input">
+                                <option value="">Select</option>
+                                <option value="Deed" ${property && property.legal && property.legal.title === 'Deed' ? 'selected' : ''}>Deed</option>
+                                <option value="Leasehold" ${property && property.legal && property.legal.title === 'Leasehold' ? 'selected' : ''}>Leasehold</option>
+                                <option value="Cession" ${property && property.legal && property.legal.title === 'Cession' ? 'selected' : ''}>Cession</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Assign Agent *</label>
+                        <select id="propAgent" required class="auth-input">
+                            <option value="">Select Agent</option>
+                            ${agents.map(agent => `
+                                <option value="${agent.id}" ${property && property.agentId === agent.id ? 'selected' : ''}>
+                                    ${agent.name} (${agent.role})
+                                </option>
+                            `).join('')}
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="upload-section">
+                    <h3>Property Description</h3>
+                    <div class="form-group">
+                        <label>Detailed Description *</label>
+                        <textarea id="propDescription" rows="6" required class="auth-input">${property ? property.description : ''}</textarea>
+                    </div>
+                </div>
+                
+                <div class="upload-section">
+                    <h3>Viewing Information</h3>
+                    <div class="multi-input-row">
+                        <div class="form-group">
+                            <label>Viewing Availability</label>
+                            <input type="text" id="propViewingAvailability" value="${property && property.viewing ? property.viewing.availability : ''}" placeholder="e.g., Weekdays 9am-5pm" class="auth-input">
+                        </div>
+                        <div class="form-group">
+                            <label>Viewing Instructions</label>
+                            <input type="text" id="propViewingInstructions" value="${property && property.viewing ? property.viewing.instructions : ''}" placeholder="e.g., 24-hour notice required" class="auth-input">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="upload-section">
+                    <h3>Property Images</h3>
+                    <div class="form-group">
+                        <label>Image URLs (One per line)</label>
+                        <textarea id="propImages" rows="4" placeholder="Enter image URLs, one per line" class="auth-input">${property ? property.images.join('\n') : ''}</textarea>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('addPropertyModal').classList.add('active');
+        }
+
+        function handleAddProperty(e) {
+            e.preventDefault();
+            
+            // Collect form data
+            const propertyData = {
+                id: editPropertyId || Date.now(),
+                title: document.getElementById('propTitle').value,
+                category: document.getElementById('propCategory').value,
+                type: document.getElementById('propType').value,
+                price: parseFloat(document.getElementById('propPrice').value),
+                province: document.getElementById('propProvince').value,
+                city: document.getElementById('propCity').value,
+                loc: document.getElementById('propLocation').value,
+                address: document.getElementById('propAddress').value || '',
+                beds: parseInt(document.getElementById('propBeds').value),
+                baths: parseInt(document.getElementById('propBaths').value),
+                area: parseInt(document.getElementById('propArea').value),
+                agentId: parseInt(document.getElementById('propAgent').value),
+                description: document.getElementById('propDescription').value,
+                status: 'active',
+                images: document.getElementById('propImages').value.split('\n').filter(url => url.trim()),
+                coordinates: {
+                    lat: parseFloat(document.getElementById('propLat').value) || -17.83,
+                    lng: parseFloat(document.getElementById('propLng').value) || 31.05
+                },
+                createdAt: editPropertyId ? DB.properties.find(p => p.id === editPropertyId)?.createdAt : new Date().toISOString().split('T')[0],
+                
+                features: {
+                    parking: parseInt(document.getElementById('propParking').value) || 0,
+                    kitchen: document.getElementById('propKitchen').value || '',
+                    furnished: document.getElementById('propFurnished').value === 'true' ? true : 
+                               document.getElementById('propFurnished').value === 'false' ? false : undefined,
+                    power: Array.from(document.querySelectorAll('input[name="power"]:checked')).map(cb => cb.value),
+                    water: Array.from(document.querySelectorAll('input[name="water"]:checked')).map(cb => cb.value),
+                    security: Array.from(document.querySelectorAll('input[name="security"]:checked')).map(cb => cb.value)
+                },
+                
+                legal: {
+                    ownership: document.getElementById('propOwnership').value || '',
+                    title: document.getElementById('propTitleType').value || '',
+                    status: 'Available'
+                },
+                
+                viewing: {
+                    availability: document.getElementById('propViewingAvailability').value || '',
+                    instructions: document.getElementById('propViewingInstructions').value || ''
+                }
+            };
+            
+            // Validate required fields
+            if (!propertyData.title || !propertyData.category || !propertyData.price || 
+                !propertyData.province || !propertyData.city || !propertyData.loc ||
+                !propertyData.beds || !propertyData.baths || !propertyData.area ||
+                !propertyData.agentId || !propertyData.description) {
+                showToast('Please fill in all required fields', 'error');
+                return;
+            }
+            
+            if (editPropertyId) {
+                // Update existing property
+                const index = DB.properties.findIndex(p => p.id === editPropertyId);
+                if (index !== -1) {
+                    DB.properties[index] = propertyData;
+                    showToast('Property updated successfully!', 'success');
+                }
+            } else {
+                // Add new property
+                DB.properties.push(propertyData);
+                showToast('Property added successfully!', 'success');
+            }
+            
+            saveDB();
+            closeModal('addPropertyModal');
+            
+            // Refresh the current view
+            renderDashView('properties');
+        }
+
+        function editProperty(id) {
+            openAddPropertyModal(id);
+        }
+
+        function deleteProperty(id) {
+            if (confirm('Are you sure you want to delete this property?')) {
+                DB.properties = DB.properties.filter(p => p.id !== id);
+                saveDB();
+                showToast('Property deleted successfully', 'success');
+                
+                // Refresh the current view
+                renderDashView('properties');
+            }
+        }
+
+        function openManageUsers() {
+            document.getElementById('manageUsersModal').classList.add('active');
+            renderUsersTable();
+        }
+
+        function renderUsersTable() {
+            const tableBody = document.getElementById('usersTableBody');
+            const users = DB.users.filter(u => u.role !== 'visitor' || u.id === currentUser.id);
+            
+            tableBody.innerHTML = users.map(user => `
+                <tr>
+                    <td>
+                        <strong>${user.name}</strong><br>
+                        <small style="color: var(--gray-text);">ID: ${user.id}</small>
+                    </td>
+                    <td>${user.email}</td>
+                    <td>
+                        <span class="badge ${user.role === 'owner' ? 'badge-success' : 
+                                         user.role === 'admin' ? 'badge-info' : 
+                                         user.role === 'agent' ? 'badge-warning' : 'badge'}">
+                            ${user.role.toUpperCase()}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="badge ${user.status === 'active' ? 'badge-success' : 
+                                         user.status === 'inactive' ? 'badge-danger' : 'badge-warning'}">
+                            ${user.status.toUpperCase()}
+                        </span>
+                    </td>
+                    <td class="action-buttons">
+                        <button onclick="editUser(${user.id})" class="btn btn-sm btn-outline">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        ${user.id !== currentUser.id && user.role !== 'owner' ? `
+                            <button onclick="deleteUser(${user.id})" class="btn btn-sm btn-danger">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        ` : ''}
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function openAddUserModal(userId = null) {
+            editUserId = userId;
+            const modalTitle = userId ? 'Edit User' : 'Add New User';
+            document.getElementById('userModalTitle').textContent = modalTitle;
+            
+            // Clear form
+            document.getElementById('editUserId').value = '';
+            document.getElementById('userName').value = '';
+            document.getElementById('userEmail').value = '';
+            document.getElementById('userPhone').value = '';
+            document.getElementById('userRole').value = '';
+            document.getElementById('userDepartment').value = '';
+            document.getElementById('userCommission').value = '';
+            document.getElementById('userStatus').value = 'active';
+            document.getElementById('userPassword').value = '';
+            document.getElementById('userConfirmPassword').value = '';
+            
+            // Show/hide password fields based on edit mode
+            document.getElementById('passwordFields').style.display = userId ? 'none' : 'block';
+            
+            if (userId) {
+                const user = DB.users.find(u => u.id === userId);
+                if (user) {
+                    document.getElementById('editUserId').value = user.id;
+                    document.getElementById('userName').value = user.name;
+                    document.getElementById('userEmail').value = user.email;
+                    document.getElementById('userPhone').value = user.phone || '';
+                    document.getElementById('userRole').value = user.role;
+                    document.getElementById('userStatus').value = user.status;
+                    document.getElementById('userDepartment').value = user.department || '';
+                    document.getElementById('userCommission').value = user.commission || '';
+                    toggleAgentFields(user.role);
+                }
+            }
+            
+            document.getElementById('addUserModal').classList.add('active');
+        }
+
+        function toggleAgentFields(role = null) {
+            const roleSelect = role || document.getElementById('userRole').value;
+            const agentFields = document.getElementById('agentFields');
+            
+            if (roleSelect === 'agent') {
+                agentFields.style.display = 'block';
+            } else {
+                agentFields.style.display = 'none';
+            }
+        }
+
+        function handleSaveUser(e) {
+            e.preventDefault();
+            
+            const userId = parseInt(document.getElementById('editUserId').value);
+            const name = document.getElementById('userName').value;
+            const email = document.getElementById('userEmail').value;
+            const phone = document.getElementById('userPhone').value;
+            const role = document.getElementById('userRole').value;
+            const status = document.getElementById('userStatus').value;
+            const department = document.getElementById('userDepartment').value;
+            const commission = parseFloat(document.getElementById('userCommission').value) || 0;
+            const password = document.getElementById('userPassword').value;
+            const confirmPassword = document.getElementById('userConfirmPassword').value;
+            
+            // Validate
+            if (!name || !email || !role) {
+                showToast('Please fill in all required fields', 'error');
+                return;
+            }
+            
+            if (!userId && (!password || !confirmPassword)) {
+                showToast('Password is required for new users', 'error');
+                return;
+            }
+            
+            if (password && password !== confirmPassword) {
+                showToast('Passwords do not match', 'error');
+                return;
+            }
+            
+            // Check if email already exists (for new users)
+            if (!userId && DB.users.find(u => u.email === email)) {
+                showToast('Email already registered', 'error');
+                return;
+            }
+            
+            if (userId) {
+                // Update existing user
+                const userIndex = DB.users.findIndex(u => u.id === userId);
+                if (userIndex !== -1) {
+                    DB.users[userIndex] = {
+                        ...DB.users[userIndex],
+                        name,
+                        email,
+                        phone,
+                        role,
+                        status,
+                        department: role === 'agent' ? department : '',
+                        commission: role === 'agent' ? commission : 0,
+                        avatar: name.charAt(0).toUpperCase()
+                    };
+                    
+                    // Update password if provided
+                    if (password) {
+                        DB.users[userIndex].pass = password;
+                    }
+                    
+                    showToast('User updated successfully!', 'success');
+                }
+            } else {
+                // Add new user - set firstLogin to true
+                const newUser = {
+                    id: Date.now(),
+                    name,
+                    email,
+                    phone,
+                    role,
+                    status,
+                    department: role === 'agent' ? department : '',
+                    commission: role === 'agent' ? commission : 0,
+                    pass: password,
+                    avatar: name.charAt(0).toUpperCase(),
+                    favorites: [],
+                    joinDate: new Date().toISOString().split('T')[0],
+                    firstLogin: true,
+                    passwordChanged: false
+                };
+                
+                DB.users.push(newUser);
+                showToast('User added successfully! They will be prompted to change password on first login.', 'success');
+            }
+            
+            saveDB();
+            closeModal('addUserModal');
+            renderUsersTable();
+        }
+
+        function editUser(id) {
+            openAddUserModal(id);
+        }
+
+        function deleteUser(id) {
+            if (confirm('Are you sure you want to delete this user?')) {
+                // Don't allow deleting yourself
+                if (id === currentUser.id) {
+                    showToast('You cannot delete your own account', 'error');
+                    return;
+                }
+                
+                DB.users = DB.users.filter(u => u.id !== id);
+                saveDB();
+                showToast('User deleted successfully', 'success');
+                renderUsersTable();
+            }
+        }
+
+        function approveRequest(requestId) {
+            const request = DB.requests.find(r => r.id === requestId);
+            if (!request) return;
+            
+            // Create user account with firstLogin flag set to true
+            const newUser = {
+                id: Date.now(),
+                name: request.name,
+                email: request.email,
+                phone: request.phone,
+                role: request.desiredRole,
+                status: 'active',
+                pass: Math.random().toString(36).slice(-8), // Generate random password
+                avatar: request.name.charAt(0).toUpperCase(),
+                favorites: [],
+                joinDate: new Date().toISOString().split('T')[0],
+                firstLogin: true,
+                passwordChanged: false
+            };
+            
+            DB.users.push(newUser);
+            request.status = 'approved';
+            saveDB();
+            
+            showToast(`Request approved. User account created. Temporary password: ${newUser.pass}. User will be prompted to change password on first login.`, 'success');
+            renderDashView('requests');
+        }
+
+        function rejectRequest(requestId) {
+            const request = DB.requests.find(r => r.id === requestId);
+            if (!request) return;
+            
+            request.status = 'rejected';
+            saveDB();
+            
+            showToast('Request rejected', 'success');
+            renderDashView('requests');
+        }
+
+        function viewRequestDetails(requestId) {
+            const request = DB.requests.find(r => r.id === requestId);
+            if (!request) return;
+            
+            alert(`Request Details:\n\nName: ${request.name}\nEmail: ${request.email}\nPhone: ${request.phone}\nDesired Role: ${request.desiredRole}\nReason: ${request.reason}\nStatus: ${request.status}\nDate: ${new Date(request.date).toLocaleDateString()}`);
+        }
+
+        function openCompareModal() {
+            if(compareList.length < 2) {
+                showToast('Select at least 2 properties to compare', 'warning');
+                return;
+            }
+            
+            const props = compareList.map(id => DB.properties.find(p => p.id === id));
+            const container = document.getElementById('compareContent');
+            
+            container.innerHTML = props.map(p => {
+                const agent = DB.users.find(u => u.id === p.agentId) || { name: 'Unknown' };
+                const pricePerSqm = Math.round(p.price / p.area);
+                
+                return `
+                    <div class="card">
+                        <img src="${p.images[0]}" style="height: 180px; width: 100%; object-fit: cover;">
+                        <div style="padding: 1rem;">
+                            <h4>${p.title}</h4>
+                            <h3 class="text-primary">$${p.price.toLocaleString()}${p.category === 'rent' ? '/month' : ''}</h3>
+                            <hr style="border-color: var(--border); margin: 1rem 0;">
+                            <p><strong>Location:</strong> ${p.loc}, ${p.city}</p>
+                            <p><strong>Type:</strong> ${p.type.charAt(0).toUpperCase() + p.type.slice(1)}</p>
+                            <p><strong>Size:</strong> ${p.area}m²</p>
+                            <p><strong>Beds/Baths:</strong> ${p.beds} / ${p.baths}</p>
+                            <p><strong>Price/m²:</strong> $${pricePerSqm}${p.category === 'rent' ? '/month' : ''}</p>
+                            <p><strong>Agent:</strong> ${agent.name}</p>
+                            <p><strong>Status:</strong> <span class="badge ${p.status === 'active' ? 'badge-success' : 'badge-warning'}">${p.status.toUpperCase()}</span></p>
+                            <a href="property-detail.html?id=${p.id}" class="btn btn-sm btn-primary" style="margin-top: 1rem; width: 100%; text-decoration: none;">View Details</a>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('compareModal').classList.add('active');
+        }
+
+        // Auth functions for dashboard
+        function switchAuthTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(t => {
+                if (t.textContent.toLowerCase().includes(tab)) t.classList.add('active');
+            });
+            
+            document.getElementById('visitorAuth').style.display = tab === 'visitor' ? 'block' : 'none';
+            document.getElementById('staffAuth').style.display = tab === 'staff' ? 'block' : 'none';
+        }
+
+        function toggleVisitorMode() {
+            const isVisitorLogin = document.getElementById('visitorToggleText').textContent.includes('Already have');
+            const visitorBtnText = document.getElementById('visitorBtnText');
+            const visitorToggleText = document.getElementById('visitorToggleText');
+            const visitorRegFields = document.getElementById('visitorRegFields');
+            
+            if(isVisitorLogin) {
+                visitorBtnText.innerText = "Login";
+                visitorToggleText.innerHTML = "Don't have an account? Sign Up";
+                visitorRegFields.style.display = 'none';
+            } else {
+                visitorBtnText.innerText = "Sign Up";
+                visitorToggleText.innerHTML = "Already have an account? Login";
+                visitorRegFields.style.display = 'block';
+            }
+        }
+
+        function handleVisitorAuth(e) {
+            e.preventDefault();
+            showToast('Please use the login page for authentication', 'info');
+            window.location.href = 'login.html';
+        }
+
+        function handleStaffAuth(e) {
+            e.preventDefault();
+            showToast('Please use the login page for authentication', 'info');
+            window.location.href = 'login.html';
+        }
+
+        function openForgotPassword() {
+            document.getElementById('forgotPasswordModal').classList.add('active');
+        }
+
+        function handleForgotPassword(e) {
+            e.preventDefault();
+            const email = document.getElementById('forgotEmail').value;
+            const user = DB.users.find(u => u.email === email);
+            
+            if(user) {
+                showToast(`Password reset link sent to ${email}`, 'success');
+                closeModal('forgotPasswordModal');
+            } else {
+                showToast('Email not found in our system', 'error');
+            }
+        }
+
+        function openRequestAccessModal() {
+            document.getElementById('requestAccessModal').classList.add('active');
+        }
+
+        function handleRequestAccess(e) {
+            e.preventDefault();
+            const name = document.getElementById('requestName').value;
+            const email = document.getElementById('requestEmail').value;
+            const phone = document.getElementById('requestPhone').value;
+            const role = document.getElementById('requestRole').value;
+            const reason = document.getElementById('requestReason').value;
+            
+            const newRequest = {
+                id: Date.now(),
+                name: name,
+                email: email,
+                phone: phone,
+                desiredRole: role,
+                reason: reason,
+                status: 'pending',
+                date: new Date().toISOString()
+            };
+            
+            DB.requests.push(newRequest);
+            saveDB();
+            
+            showToast('Access request submitted successfully!', 'success');
+            closeModal('requestAccessModal');
+        }
+
+        function handleChangePassword(e) {
+            e.preventDefault();
+            const currentPass = document.getElementById('currentPassword').value;
+            const newPass = document.getElementById('newPassword').value;
+            const confirmNewPass = document.getElementById('confirmNewPassword').value;
+            
+            if (!currentUser) {
+                showToast('You must be logged in to change password', 'error');
+                return;
+            }
+            
+            // Verify current password
+            if (currentUser.pass !== currentPass) {
+                showToast('Current password is incorrect', 'error');
+                return;
+            }
+            
+            // Validate new password
+            if (newPass.length < 6) {
+                showToast('New password must be at least 6 characters', 'error');
+                return;
+            }
+            
+            if (newPass !== confirmNewPass) {
+                showToast('New passwords do not match', 'error');
+                return;
+            }
+            
+            // Update password in database
+            const userIndex = DB.users.findIndex(u => u.id === currentUser.id);
+            if (userIndex !== -1) {
+                DB.users[userIndex].pass = newPass;
+                DB.users[userIndex].firstLogin = false;
+                DB.users[userIndex].passwordChanged = true;
+                
+                // Update current user in session
+                currentUser.pass = newPass;
+                currentUser.firstLogin = false;
+                currentUser.passwordChanged = true;
+                
+                saveDB();
+                saveSession();
+                
+                showToast('Password changed successfully!', 'success');
+                closeModal('changePasswordModal');
+                
+                // Clear form
+                document.getElementById('changePasswordForm').reset();
+            }
+        }
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!currentUser) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            enterDashboard();
+            
+            // Close modals when clicking outside
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('modal-overlay')) {
+                    e.target.classList.remove('active');
+                    editPropertyId = null;
+                    editUserId = null;
+                }
+            });
+        });
+    </script>
+</body>
+</html>
