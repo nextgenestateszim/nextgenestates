@@ -130,7 +130,7 @@
     </footer>
 
     <!-- Property Detail JavaScript -->
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"><./script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"><script>
     <script>
         // Global variables
         let DB = JSON.parse(localStorage.getItem('nextGenDB')) || defaultDB;
@@ -641,10 +641,12 @@
         const updateCompareBar = window.updateCompareBar || function() {};
         const compareList = JSON.parse(localStorage.getItem('nextGenCompare')) || [];
         const currentUser = window.currentUser || null;
-    <./script>
+    <script>
 
     <!-- Common Scripts -->
+    <script src="script.js"></script>
     <script src="./script.js"></script>
 </body>
 
 </html>
+
